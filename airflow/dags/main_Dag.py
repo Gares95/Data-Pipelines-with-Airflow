@@ -55,6 +55,8 @@ stage_songs_to_redshift = StageToRedshiftOperator(
     extra_params="JSON 'auto'"
 )
 
+
+
 load_songplays_table = LoadFactOperator(
     task_id='Load_songplays_fact_table',
     dag=dag,
@@ -105,6 +107,7 @@ run_quality_checks = DataQualityOperator(
 
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
 
+
 start_operator >> stage_events_to_redshift
 start_operator >>stage_songs_to_redshift
 
@@ -122,4 +125,3 @@ load_artist_dimension_table >> run_quality_checks
 load_time_dimension_table >> run_quality_checks
 
 run_quality_checks >> end_operator
-

@@ -27,7 +27,6 @@ class LoadFactOperator(BaseOperator):
         
         self.log.info("Inserting data from staging tables to {} fact table".format(self.table))
         self.log.info("This is the sql introduced {}".format(self.sql))
-        #         redshift.run(self.sql)
         formatted_sql = "INSERT INTO {} {}".format(self.table, self.sql)
         self.log.info("This is the sql formated {}".format(formatted_sql))
         redshift.run(formatted_sql)
