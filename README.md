@@ -4,13 +4,13 @@ This project will include the files to create and define tables for a database w
 
 This repository simulates the creation of an ETL pipeline for a music streaming startup whose data currently resides in S3 buckets in AWS and they've decided to add automation and monitoring to their data warehouse in Redshift. 
 
-For this purpose we are going to use Apache Airflow to define and optimize different task and configure task dependencies to establish all the steps for this pipeline. The taks will include: 
+For this purpose, we are going to use Apache Airflow to define and optimize different task and configure task dependencies to establish all the steps for this pipeline. The tasks will include: 
 - The creation of the tables in the redshift cluster.
 - The extraction of the data from the S3 buckets into staging tables.
 - Processing the data and loading it into the final tables in the data warehouse.
 - Run a quality check to make sure every table has the right structure and format. 
 
-The objective of this repository is to process the data and create a star schema optimized for queries for the song play analysis and to use Apache Airflow to be able to monitore and automate each task allowing the client to proccess the data in a controled and structured way.
+The objective of this repository is to process the data and create a star schema optimized for queries for the song play analysis and to use Apache Airflow to be able to monitor and automate each task allowing the client to process the data in a controlled and structured way.
 
 The data currently is in an S3 bucket in directories which contains their log data and song data in JSON files (more information below).
 
@@ -22,7 +22,7 @@ The completion of this was made by Guillermo Garcia and the review of the progra
 # Data Files
 ***
 ### Song Dataset
-The first dataset is a subset of real data from the Million Song Dataset. Each file is in JSON format and contains metadata about a song and the artist of that song. The files are partitioned by the first three letters of each song's track ID. Here is an example of a filepath: _"song_data/A/B/C/TRABCEI128F424C983.json"_
+The first dataset is a subset of real data from the Million Song Dataset. Each file is in JSON format and contains metadata about a song and the artist of that song. The files are partitioned by the first three letters of each song's track ID. Here is an example of a file path: _"song_data/A/B/C/TRABCEI128F424C983.json"_
 And here is an example of one of the json files: _{"num_songs": 1, "artist_id": "ARJIE2Y1187B994AB7", "artist_latitude": null, "artist_longitude": null, "artist_location": "", "artist_name": "Line Renaud", "song_id": "SOUPIRU12A6D4FA1E1", "title": "Der Kleine Dompfaff", "duration": 152.92036, "year": 0}_
 S3 bucket: s3://udacity-dend/song_data
 
@@ -57,7 +57,7 @@ This folder contains an auxiliar file with the remaining sql statements.
 
 ### sql_queries.py
 
-These file also contains the sql statements to select the data from the <em>staging tables</em>. After formating this statements the data filtered will be inserted in the <em>fact and dimensional tables</em>.  
+These file also contains the sql statements to select the data from the <em>staging tables</em>. After formatting this statements the data filtered will be inserted in the <em>fact and dimensional tables</em>.  
 
 ## operators folder
 This folder contains the operators with each dedicated task for the pipeline.
