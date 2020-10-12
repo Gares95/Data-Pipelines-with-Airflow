@@ -44,6 +44,8 @@ The star schema that is going to be created using this program will have the nex
 4. artist [artist_id, name, location, lattitude, longitude]
 5. time [start_time, hour, day, week, month, year, weekday]
 
+[alt text](https://raw.githubusercontent.com/Gares95/Data-Pipelines-with-Airflow/master/Star%20Schema.PNG)
+
 # Python and SQL files
 ***
 ### create_tables.sql
@@ -82,3 +84,5 @@ This operator contains the code to copy the data from the S3 buckets to the stag
 This python file has the main code which contains the call to all the operators and all the variables passed as parameters which allows the program to create and run the entire pipeline. It also contains the task dependencies at the end of the code which controls that each task are run in an order way and forms the pipeline.
 
 ### Dag with the task dependencies
+
+[alt text](https://raw.githubusercontent.com/Gares95/Data-Pipelines-with-Airflow/master/Task%20dependencies.png)
