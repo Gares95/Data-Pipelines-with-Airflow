@@ -6,7 +6,6 @@ from airflow.operators import (StageToRedshiftOperator, LoadFactOperator,
                                 PostgresOperator, LoadDimensionOperator, DataQualityOperator)
 from helpers import SqlQueries
 
-
 default_args = {
     'owner': 'udacity',
     'start_date': datetime(2019, 1, 12),
@@ -16,14 +15,21 @@ default_args = {
     'email_on_retry': False
 }
 
-
 dag = DAG('udac_example_dag',
           default_args=default_args,
           description='Load and transform data in Redshift with Airflow',
-          schedule_interval='0 * * * *'
+          schedule_interval='0 * * * *',
+          catchup=False
         )
 
-start_operator = DummyOperator(task_id='Begin_execution',  dag=dag)
+start_operator = PostgresOperator(
+    task_id='Begin_execution',  
+    dag=dag,
+    postgres_conn_id="redshift",
+    sql='create_tables.sql'
+)
+# If tables are already created
+# start_operator = DummyOperator(task_id='Begin_execution',  dag=dag)
 
 stage_events_to_redshift = StageToRedshiftOperator(
     task_id='Stage_events',
