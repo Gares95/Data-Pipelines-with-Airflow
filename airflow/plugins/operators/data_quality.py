@@ -11,7 +11,7 @@ class DataQualityOperator(BaseOperator):
     def __init__(self,
                  redshift_conn_id = "",
                  tables=[],
-                 checks=[{}],
+                 checks=[],
                  *args, **kwargs):
 
         super(DataQualityOperator, self).__init__(*args, **kwargs)
