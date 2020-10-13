@@ -12,14 +12,14 @@ default_args = {
     'depends_on_past': False,
     'retries': 3,
     'retray_delay': timedelta(minutes=5),
+    'catchup_by_default': False,
     'email_on_retry': False
 }
 
 dag = DAG('udac_example_dag',
           default_args=default_args,
           description='Load and transform data in Redshift with Airflow',
-          schedule_interval='0 * * * *',
-          catchup=False
+          schedule_interval='0 * * * *'
         )
 
 start_operator = PostgresOperator(
@@ -62,7 +62,8 @@ load_songplays_table = LoadFactOperator(
     dag=dag,
     redshift_conn_id="redshift",
     table = "songplays",    
-    sql=getattr(SqlQueries, "songplay_table_insert")
+    sql=getattr(SqlQueries, "songplay_table_insert"),
+    functionality = "append-only"
 )
 
 load_user_dimension_table = LoadDimensionOperator(
@@ -70,7 +71,8 @@ load_user_dimension_table = LoadDimensionOperator(
     dag=dag,
     redshift_conn_id="redshift",
     table = "users",
-    sql=getattr(SqlQueries, "user_table_insert")
+    sql=getattr(SqlQueries, "user_table_insert"),
+    functionality = "truncate"
 )
 
 load_song_dimension_table = LoadDimensionOperator(
@@ -78,8 +80,8 @@ load_song_dimension_table = LoadDimensionOperator(
     dag=dag,
     redshift_conn_id="redshift",
     table = "songs",
-    sql=getattr(SqlQueries, "song_table_insert")
-    
+    sql=getattr(SqlQueries, "song_table_insert"),
+    functionality = "truncate"
 )
 
 load_artist_dimension_table = LoadDimensionOperator(
@@ -87,7 +89,8 @@ load_artist_dimension_table = LoadDimensionOperator(
     dag=dag,
     redshift_conn_id="redshift",
     table = "artists",
-    sql=getattr(SqlQueries, "artist_table_insert")
+    sql=getattr(SqlQueries, "artist_table_insert"),
+    functionality = "truncate"
 )
 
 load_time_dimension_table = LoadDimensionOperator(
@@ -95,14 +98,16 @@ load_time_dimension_table = LoadDimensionOperator(
     dag=dag,
     redshift_conn_id="redshift",
     table = "time",
-    sql=getattr(SqlQueries, "time_table_insert")
+    sql=getattr(SqlQueries, "time_table_insert"),
+    functionality = "truncate"
 )
 
 run_quality_checks = DataQualityOperator(
     task_id='Run_data_quality_checks',
     dag=dag,
     redshift_conn_id="redshift",
-    tables = ["songplays", "users", "songs", "artists", "time"]
+    tables = ["songplays", "users", "songs", "artists", "time"],
+    checks = [{'check_sql':"SELECT COUNT(*) FROM {}", 'expected_result': True}, {'check_sql': "SELECT COUNT(*) FROM {} WHERE {} IS NULL", 'expected_result': False}]
 )
 
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)

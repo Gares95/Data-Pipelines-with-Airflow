@@ -11,11 +11,13 @@ class DataQualityOperator(BaseOperator):
     def __init__(self,
                  redshift_conn_id = "",
                  tables=[],
+                 checks=[{}],
                  *args, **kwargs):
 
         super(DataQualityOperator, self).__init__(*args, **kwargs)
         self.redshift_conn_id = redshift_conn_id
         self.tables = tables
+        self.checks = checks
 
     def execute(self, context):
         self.log.info('DataQualityOperator work in progress')
@@ -23,15 +25,23 @@ class DataQualityOperator(BaseOperator):
         
         self.log.info('This are my tables {}'.format(self.tables))
         for table in self.tables: 
-            records = redshift_hook.get_records(f"SELECT COUNT(*) FROM {table}")
-            self.log.info("This records are of type: {}".format(type(records)))
-            if len(records) < 1 or len(records[0]) < 1:
-                raise ValueError(f"Data quality check failed. {table} returned no results")
-            num_records = records[0][0]
-            if num_records < 1:
-                raise ValueError(f"Data quality check failed. {table} contained 0 rows")
-            if any(elem is None for elem in records):
-                raise ValueError(f"Data quality check failed. {table} contains None element(s)")
+#             columns = redshift_hook.get_records(f"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'{table}';")
+            columns = redshift_hook.get_records(f"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{table}' ORDER BY ORDINAL_POSITION;")
+            self.log.info('This are my columns {}'.format(columns))
+            i = 0
+            for check in self.checks:
+                if i == 0:
+                    sql = check.get('check_sql').format(table)
+                else:
+                    self.log.info('This is my column: {}'.format(columns[0][0]))
+                    sql = check.get('check_sql').format(table,columns[0][0])
+                    self.log.info('This is sql: {}'.format(sql))
+                exp_result = check.get('expected_result')
+                records = redshift_hook.get_records(sql)
+                self.log.info('This is the count: {}'.format(records[0][0]))
+                if (records[0][0] > 0) != exp_result:
+                    raise ValueError(f"Data quality check failed. {table}")
+                i += 1
             logging.info(f"Data quality on table {table} check passed with {records[0][0]} records")
 
             
