@@ -11,25 +11,22 @@ class LoadDimensionOperator(BaseOperator):
                  redshift_conn_id = "",
                  table="",
                  sql = "",
-                 functionality="",
+                 append_only="",
                  *args, **kwargs):
 
         super(LoadDimensionOperator, self).__init__(*args, **kwargs)
         self.redshift_conn_id = redshift_conn_id
         self.table = table
         self.sql = sql
-        self.functionality = functionality
+        self.append_only = append_only
 
     def execute(self, context):
         self.log.info('LoadDimensionOperator work in progress')
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
-        if self.functionality == "truncate":
+        if not self.append_only:
             self.log.info("Clearing data from destination Redshift table")
             redshift.run("DELETE FROM {}".format(self.table))
 
-            self.log.info("Inserting data from staging tables to {} fact table".format(self.table))
-            formatted_sql = "INSERT INTO {} {}".format(self.table, self.sql)
-        elif self.functionality == "append-only":
-            self.log.info("Inserting data from staging tables to {} fact table".format(self.table))
-            formatted_sql = "INSERT INTO {} {}".format(self.table, self.sql)
+        self.log.info("Inserting data from staging tables to {} fact table".format(self.table))
+        formatted_sql = "INSERT INTO {} {}".format(self.table, self.sql)
         redshift.run(formatted_sql)
