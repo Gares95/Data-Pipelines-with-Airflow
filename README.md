@@ -14,11 +14,6 @@ The objective of this repository is to process the data and create a star schema
 
 The data currently is in an S3 bucket in directories which contains their log data and song data in JSON files (more information below).
 
-
-### Credits
-Udacity provided the template and the guidelines to start this project.
-The completion of this was made by Guillermo Garcia and the review of the program and the verification that the project followed the proper procedures was also made by my mentor from udacity.
-
 # Data Files
 ***
 ### Song Dataset
@@ -86,3 +81,8 @@ This python file has the main code which contains the call to all the operators 
 ### Dag with the task dependencies
 
 ![alt text](https://raw.githubusercontent.com/Gares95/Data-Pipelines-with-Airflow/master/Task_dependencies.png)
+
+
+### Credits
+Udacity provided the template and the guidelines to start this project.
+The completion of this was made by Guillermo Garcia and the review of the program and the verification that the project followed the proper procedures was also made by my mentor from udacity.
